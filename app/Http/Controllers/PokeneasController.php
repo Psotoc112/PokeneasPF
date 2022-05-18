@@ -3,40 +3,58 @@
 namespace App\Http\Controllers;
 class PokeneasController extends Controller
 {
-    public static $pokeneas = [
+    public static $pokeneas = array(
 
-        ["id"=>"1", "name"=>"Picanea", "altura"=>"1.1", "habilidad" => "Robo electrico", "imagen" => "", "frase" => "pica pica"],
+        ["id"=>"1", "name"=>"Picanea", "height"=>"1.1", "skill" => "Robo electrico", "image" => "https://storage.googleapis.com/pokeneaspf/nea1.jpg", "philosophyQuote" => "pica pica"],
         
-        ["id"=>"2", "name"=>"Squinea", "altura"=>"1.2", "habilidad" => "Robo acuatico", "imagen" => "", "frase" => "sqrt(ans)"],
+        ["id"=>"2", "name"=>"Squinea", "height"=>"1.2", "skill" => "Robo acuatico", "image" => "https://storage.googleapis.com/pokeneaspf/nea2.jpg", "philosophyQuote" => "sqrt(ans)"],
         
-        ["id"=>"3", "name"=>"Charmanea", "altura"=>"1.3", "habilidad" => "Robo caliente", "imagen" => "", "frase" => "no lo se bro no soy calculadora"],
+        ["id"=>"3", "name"=>"Charmanea", "height"=>"1.3", "skill" => "Robo caliente", "image" => "https://storage.googleapis.com/pokeneaspf/nea3.jpg", "philosophyQuote" => "no lo se bro no soy calculadora"],
         
-        ["id"=>"4", "name"=>"Luginea", "altura"=>"1.4", "habilidad" => "Chirreo maximo", "imagen" => "", "frase" => "usted se caracteriza por dos cosas"],
+        ["id"=>"4", "name"=>"Luginea", "height"=>"1.4", "skill" => "Chirreo maximo", "image" => "https://storage.googleapis.com/pokeneaspf/nea4.jpg", "philosophyQuote" => "usted se caracteriza por dos cosas"],
 
-        ["id"=>"5", "name"=>"Snornea", "altura"=>"1.5", "habilidad" => "Bostezo nea", "imagen" => "", "frase" => "no coma cuento"],
+        ["id"=>"5", "name"=>"Snornea", "height"=>"1.5", "skill" => "Bostezo nea", "image" => "https://storage.googleapis.com/pokeneaspf/nea5.jpg", "philosophyQuote" => "no coma cuento"],
         
-        ["id"=>"6", "name"=>"Eevenea", "altura"=>"1.6", "habilidad" => "Atraco", "imagen" => "", "frase" => "no sea tan horny"],
+        ["id"=>"6", "name"=>"Eevenea", "height"=>"1.6", "skill" => "Atraco", "image" => "https://storage.googleapis.com/pokeneaspf/nea6.jpg", "philosophyQuote" => "no sea tan horny"],
         
-        ["id"=>"7", "name"=>"Dittnea", "altura"=>"1.7", "habilidad" => "Robo silecioso", "imagen" => "", "frase" => "si? ah bueno"],
+        ["id"=>"7", "name"=>"Dittnea", "height"=>"1.7", "skill" => "Robo silecioso", "image" => "https://storage.googleapis.com/pokeneaspf/nea7.jpg", "philosophyQuote" => "si? ah bueno"],
         
-    ];
+    );
 
-    public function index()
+    public function generateRandomPokenea($callerMethod)
     {
         $totalPokeneas = (count(PokeneasController::$pokeneas));
-        $randomNumber = (rand(0,($totalPokeneas-1)));
+        $randomNumber = (rand(0, ($totalPokeneas - 1)));
         $randomPokenea = PokeneasController::$pokeneas[$randomNumber];
-        unset($randomPokenea["imagen"]);
-        return response()->json(['Pokenea' => $randomPokenea]);
+        $pokeInfo = array();
+        if ($callerMethod == "showPokenea") {
+            $pokeInfo["id"] = $randomPokenea["id"];
+            $pokeInfo["name"] = $randomPokenea["name"];
+            $pokeInfo["height"] = $randomPokenea["height"];
+            $pokeInfo["skill"] = $randomPokenea["skill"];
+            $pokeInfo["image"] = $randomPokenea["image"];
+            $pokeInfo["philosophyQuote"] = $randomPokenea["philosophyQuote"];
+        } else {
+            $pokeInfo["image"] = $randomPokenea["image"];
+            $pokeInfo["philosophyQuote"] = $randomPokenea["philosophyQuote"];
+        }
+        return $pokeInfo;
     }
-    public function frases(){
-        $totalPokeneas = (count(PokeneasController::$pokeneas));
-        $randomNumber = (rand(0,($totalPokeneas-1)));
-        $randomFrase = PokeneasController::$pokeneas[$randomNumber]["frase"];
-        $randomImg = PokeneasController::$pokeneas[$randomNumber]["imagen"];
-        $imageData = base64_encode(file_get_contents($randomImg));
-        echo '<img src="data:image/jpeg;base64,'.$imageData.'">';
-        echo '<br>';
-        return response()->json(['Pokenea' => $randomFrase,'docker_id' => gethostbyname(gethostname())]);
+
+    public function showPokenea()
+    {
+        $containerID = gethostbyname(gethostname());
+        $jsonData["pokenea"] = PokeneasController::generateRandomPokenea("showPokenea");
+        $jsonData["containerID"] = $containerID;
+        return response()->json(['jsonData' => $jsonData]);
+    }
+
+    public function showMultimedia()
+    {
+        $containerID = gethostbyname(gethostname());
+        $pokeMultimedia = PokeneasController::generateRandomPokenea("showMultimedia");
+        $data["containerID"] = $containerID;
+        $data["pokeMultimedia"] = $pokeMultimedia;
+        return view('pokeContent')->with("data", $data);
     }
 }

@@ -13,13 +13,14 @@
 |
 */
 
-$router->get('/version', function () use ($router) {
+$router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->get('/', [
-    'as' => 'index', 'uses' => 'PokeneasController@index'
+$router->get('/index', [
+    'as' => 'showPokenea', 'uses' => 'PokeneasController@showPokenea'
 ]);
-$router->get('/frases', [
-    'as' => 'frases', 'uses' => 'PokeneasController@frases'
+
+$router->get('/pokecontent', [
+    'as' => 'showMultimedia', 'uses' => 'PokeneasController@showMultimedia'
 ]);
